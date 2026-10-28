@@ -64,6 +64,9 @@ export class ViewerStore {
 
 	private display(state: GameState): void {
 		this.state = state;
+		if (!this.replayable) {
+			this.replayAt = undefined;
+		}
 		this.selected = undefined;
 		this.sending = false;
 		this.undoCount = this.draft.count;
@@ -108,7 +111,7 @@ export class ViewerStore {
 	}
 
 	/** With a limited log (rules.md §13), replay waits until the game ends and the log is whole. */
-	replayable = $derived(!this.state?.log.some((entry) => entry.type === "hidden"));
+	replayable = $derived(!this.state?.options.limitedLog || this.state.ended);
 
 	/** The replay range BGS shows in its controls: setup done, up to the live position. */
 	replayRange(): { start: number; end: number } {

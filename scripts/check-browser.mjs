@@ -104,6 +104,129 @@ try {
 	assert.equal(report.diagnostics.compatible, true);
 	assert.equal(report.diagnostics.recommended.percent, 100);
 
+	// The two-tile variant keeps both placements private until buying or a commit boundary.
+	for (const width of [1280, 390, 320]) {
+		await page.setViewportSize({ width, height: 900 });
+		await open("players=3&hotseat=0&view=0&twoTiles=1&limitedLog=1");
+		await page.evaluate((state) => {
+			const { parseTile, allTiles } = window.acquireDev.rules;
+			state.options.twoTiles = true;
+			state.options.limitedLog = true;
+			state.board[parseTile("1C")] = "loose";
+			state.seats[0].hand = ["2A", "3A", "2C", "5E", "7E", "9E", "7G", "9G"].map(parseTile);
+			const held = new Set(state.seats.flatMap((seat) => seat.hand));
+			state.pool = allTiles().filter((tile) => state.board[tile] === null && !held.has(tile));
+			window.acquireDev.load(state);
+		}, preparedPosition("founding"));
+		await settle();
+		assert.equal(await page.locator("section.hand .tile").count(), 8);
+		const original = await page.evaluate(() => JSON.stringify(window.acquireDev.state));
+		await page.locator(".board").getByRole("button", { name: "Place 2A", exact: true }).click();
+		await page.locator(".choices button").filter({ hasText: "Tower" }).click();
+		await settle();
+		assert.match(await page.locator(".status").innerText(), /second tile/);
+		assert.equal(await page.locator("table.buy").count(), 0);
+		assert.equal(await page.locator("section.hand .tile.paused").count(), 1);
+		assert.equal(await page.locator(".board").getByRole("button", { name: "Place 2C", exact: true }).count(), 0);
+		for (const theme of ["light", "dark"]) {
+			await page.evaluate((value) => window.acquireDev.emitter.emit("theme", { dark: value === "dark" }), theme);
+			for (const locale of locales) {
+				await preferences({ locale });
+				assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+				assert.ok((await page.locator("section.hand .tile-notes").innerText()).length > 5);
+			}
+			await preferences({ locale: "en" });
+			await page.screenshot({ path: fileURLToPath(new URL(`two-tiles-${theme}-${width}.png`, output)) });
+		}
+		for (let revision = 0; revision < 3; revision++) {
+			await page.locator(".board").getByRole("button", { name: "Place 3A", exact: true }).click();
+			await page.waitForSelector("table.buy");
+			assert.equal(await page.evaluate(() => JSON.stringify(window.acquireDev.state)), original);
+			await page.getByRole("button", { name: "Undo", exact: true }).click();
+			await settle();
+			assert.match(await page.locator(".status").innerText(), /second tile/);
+		}
+		await page.locator(".board").getByRole("button", { name: "Place 3A", exact: true }).click();
+		await page.waitForSelector("table.buy");
+		await page.locator(".panel .primary").click();
+		await page.waitForFunction(() => window.acquireDev.state.turn === 2);
+		assert.deepEqual(
+			await page.evaluate(() => ({
+				moves: window.acquireDev.state.log.filter((entry) => entry.type === "move").length,
+				increments: window.acquireDev.engine.timeIncrements(window.acquireDev.state),
+				hand: window.acquireDev.state.seats[0].hand.length,
+			})),
+			{ moves: 4, increments: [1, 0, 0], hand: 8 }
+		);
+	}
+	report.scenarios.push(
+		"two-tile placement limits, 17 locales/both themes/phone layouts, repeated undo and one turn increment"
+	);
+
+	// Limited logs never enter replay during play, including before the first hidden entry.
+	for (const mode of ["players=4", "players=2&twoPlayerMode=fourHands"]) {
+		await open(`${mode}&twoTiles=1&limitedLog=1&hotseat=0&view=0`);
+		for (const later of [false, true]) {
+			if (later) {
+				await page.evaluate(() => {
+					const { rules, state, load } = window.acquireDev;
+					for (let i = 0; state.turn < 15 && i < 300; i++) {
+						const moves = rules.legalMoves(state).filter((move) => move.type !== "announce");
+						rules.applyMove(state, moves[i % moves.length], rules.currentSeat(state));
+					}
+					load(state);
+				});
+			}
+			const count = mode.startsWith("players=4") ? 4 : 2;
+			for (let viewer = 0; viewer <= count; viewer++) {
+				await page.evaluate(
+					(player) => {
+						const { engine, emitter, state } = window.acquireDev;
+						const index = player ?? undefined;
+						emitter.emit("player", { index });
+						emitter.emit("state", engine.stripSecret(state, index));
+					},
+					viewer === count ? null : viewer
+				);
+				await settle();
+				const board = await page.locator(".board").first().innerText();
+				const hands = await page.locator("section.hand").count();
+				await page.evaluate(() => {
+					const { emitter } = window.acquireDev;
+					emitter.emit("replay:start");
+					emitter.emit("replay:to", 0);
+				});
+				await settle();
+				assert.equal(await page.locator(".board").first().innerText(), board);
+				assert.equal(await page.locator("section.hand").count(), hands);
+				await page.evaluate(() => window.acquireDev.emitter.emit("replay:end"));
+			}
+		}
+		await page.evaluate(() => {
+			const { rules, state, load } = window.acquireDev;
+			for (let i = 0; !state.ended && i < 2000; i++) {
+				const moves = rules.legalMoves(state);
+				rules.applyMove(
+					state,
+					moves.find((move) => move.type === "announce") ?? moves[i % moves.length],
+					rules.currentSeat(state)
+				);
+			}
+			load(state);
+		});
+		await settle();
+		assert.equal(await page.evaluate(() => window.acquireDev.state.ended), true);
+		assert.equal(await page.locator(".log li.hidden").count(), 0);
+		const endedBoard = await page.locator(".board").first().innerText();
+		await page.evaluate(() => {
+			window.acquireDev.emitter.emit("replay:start");
+			window.acquireDev.emitter.emit("replay:to", 0);
+		});
+		await settle();
+		assert.notEqual(await page.locator(".board").first().innerText(), endedBoard);
+	}
+	report.scenarios.push("limited log: players/four hands/spectators, live replay lock and full replay after game end");
+
 	// Optional swaps are private drafts, with one shared allowance and separate purchases.
 	for (const width of [1280, 390, 320]) {
 		await page.setViewportSize({ width, height: 900 });

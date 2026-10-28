@@ -14,7 +14,7 @@ export function logWindowStart(state: GameState, player: number | undefined): nu
 	if (!state.options.limitedLog || state.ended) {
 		return 0;
 	}
-	const own = player === undefined ? [state.activeSeat] : seatsOf(state, player);
+	const own = seatsOf(state, player ?? state.seatOwner[state.activeSeat]);
 	let current = true;
 	for (let index = state.log.length - 1; index >= 0; index--) {
 		const entry = state.log[index]!;

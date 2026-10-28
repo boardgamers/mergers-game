@@ -6,6 +6,7 @@ import { logWindowStart } from "./limited-log.js";
 import { applyMove, currentSeat } from "./moves.js";
 import { normalizeOptions } from "./options.js";
 import { initGame } from "./setup.js";
+import { simpleLine } from "./simple.js";
 import type { GameState, LogEntry } from "./types.js";
 
 const LIMITED = { limitedLog: true };
@@ -82,6 +83,26 @@ test("§13 limitedLog: a merger in progress stays fully visible to every dispose
 		applyMove(state, moves[Math.floor(random() * moves.length)]!, currentSeat(state)!);
 	}
 	assert.ok(disposals > 0, "the game reached a stock disposal");
+});
+
+test("§13 limitedLog: visible turn summaries cannot reveal an earlier hidden turn", () => {
+	const state = initGame(4, LIMITED, "summary-window");
+	playUntil(state, lcg(2), (s) => s.turn > 14 && s.phase === "place");
+	for (const player of [0, 1, 2, 3, undefined]) {
+		const start = logWindowStart(state, player);
+		assert.ok(start > 0);
+		const view = wrapper.stripSecret(state, player);
+		assert.equal(view.log[start - 1]!.type, "hidden");
+		const slice = wrapper.logSlice(state, { player, start, end: start }).log;
+		assert.equal(slice[0]!.simple, simpleLine(state, state.log[start]!));
+	}
+});
+
+test("§13 limitedLog: four-hands spectators use both seats of the active player", () => {
+	const state = initGame(2, { ...LIMITED, twoPlayerMode: "fourHands" }, "spectator-window");
+	playUntil(state, lcg(2), (s) => s.turn > 14 && s.phase === "place");
+	const owner = state.seatOwner[state.activeSeat]!;
+	assert.deepEqual(wrapper.stripSecret(state).log, wrapper.stripSecret(state, owner).log);
 });
 
 test("§13 limitedLog: the whole log is revealed once the game ends", () => {

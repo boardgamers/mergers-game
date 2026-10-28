@@ -58,6 +58,9 @@ export function simpleLineAt(state: GameState, index: number): string {
 export function turnSummary(state: GameState, index: number): string {
 	let start = index - 1;
 	while (start >= 0 && state.log[start]!.type !== "turn") {
+		if (state.log[start]!.type === "hidden") {
+			return simpleLine(state, state.log[index]!);
+		}
 		start--;
 	}
 	if (start < 0) {

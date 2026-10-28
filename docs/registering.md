@@ -1,7 +1,7 @@
 # Publishing Acquire on boardgamers.space
 
 Acquire is already registered as game **`acquire`**, BGS version **`1`**, and is **public**
-(verified 27 October 2026). Routine updates must preserve that visibility and the existing
+(verified 28 October 2026). Routine updates must preserve that visibility and the existing
 configuration. Start with [AGENTS.md](../AGENTS.md) for repository checks and compatibility
 requirements, and [admin/release-check.md](admin/release-check.md) for the latest release record.
 
@@ -146,8 +146,9 @@ do not replace other declarations from an old local snapshot.
 
 Current declaration sources are in [admin/gameinfo.json](admin/gameinfo.json):
 
-- Six options: public holdings, team play, two-player mode, automatic ending, end size,
-  and **Stock swap: Off / 3 / 5 / 7 / Unlimited**, default Off.
+- Setup options include public holdings, team play, two-player mode, automatic ending, end size,
+  **Stock swap: Off / 3 / 5 / 7 / Unlimited**, two tiles per turn and limited game log.
+  Stock swaps, two tiles per turn and limited logs default Off.
 - The **sound** preference, default on, also honoring BGS's global sound setting.
 - Three interactive tutorial chapters: founding, mergers and scoring.
 

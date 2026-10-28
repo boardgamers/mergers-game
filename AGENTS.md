@@ -3,7 +3,7 @@
 ## Repository and live status
 
 - This is **Acquire**, in `boardgamers/mergers-game`; the BGS game id is `acquire`, version **1**.
-- **The BGS game is public**, verified 27 October 2026. Preserve the live visibility and
+- **The BGS game is public**, verified 28 October 2026. Preserve the live visibility and
   unrelated metadata on updates. Fetch fresh metadata before publishing; this file is not a
   substitute for checking the live configuration.
 - `docs/admin/gameinfo.json` is a bootstrap template. Its `public: false` and blank artifact
@@ -53,6 +53,9 @@ Use Node 24 and pnpm 11. Inspect the working tree before editing and preserve un
 - Stock swaps are an optional house rule: Off / 3 / 5 / 7 / Unlimited. The per-turn limit is
   shared across exchanges, separate from the three-share purchase allowance; prices apply
   after all merger resolution. Keep the default Off.
+- Two tiles per turn and limited game log are optional, default Off. Two-tile turns retain
+  private undo and one turn increment. Limited logs must filter both entries and BGS summaries;
+  four-hands spectators use the active player's window. Replay unlocks at game end.
 
 ## Setup options and player preferences
 

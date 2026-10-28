@@ -1,9 +1,19 @@
-# Acquire — 26 October 2026
+# Acquire — 28 October 2026
 
-BGS registration: `acquire`, version `1`. Engine `0.0.4`, viewer `0.0.17`.
+BGS registration: `acquire`, version `1`. Engine `0.0.5`, viewer `0.0.18`.
 Source: <https://github.com/boardgamers/mergers-game>. The live game is now public; preserve its current visibility when updating.
 
 ## Validation
+
+- [MikeIsom's PR #1](https://github.com/boardgamers/mergers-game/pull/1) adds two optional
+  setup checkboxes, both default Off: two tiles per turn (hands of 8) and limited game log.
+  The shortened labels requested in review are included. Two-tile rules cover founding/merger
+  restrictions, bank tiles, dead-tile replacement, skipped placements, dropped players and replay.
+  Follow-up fixes prevent BGS turn summaries from exposing hidden history, give four-hands
+  spectators the active player's log window, and lock replay throughout limited-log play.
+  Regression tests cover those privacy boundaries plus repeated two-tile revisions without
+  growing saved history or awarding duplicate time. Browser checks exercise both variants,
+  mobile layouts, all 17 locales, light/dark themes and replay after the full log is revealed.
 
 - Optional stock swaps default to Off, with 3/5/7/Unlimited shares per turn shared across exchanges.
   Only active chains may swap 1:1 at current prices after all mergers, respecting bank stock,
@@ -46,8 +56,8 @@ Source: <https://github.com/boardgamers/mergers-game>. The live game is now publ
   requests, hidden-information masking, replay, bank mode, four-hands, teams and dropped players.
   Desktop/phone checks exercise repeated undo, saved-state refreshes, final history and clock totals.
 
-- `pnpm check`: formatting, lint, TypeScript/Svelte checks, 222 engine tests,
-  66 viewer/tutorial tests, and the production build. Two pre-existing lint warnings
+- `pnpm check`: formatting, lint, TypeScript/Svelte checks, 242 engine tests,
+  67 viewer/tutorial tests, and the production build. Two pre-existing lint warnings
   remain (an unused test import and Svelte's `bind:this` assignment).
 - Protocol diagnostics: all eight required engine methods; full core/chat/replay
   viewer coverage, preferences, avatars and theme handlers. Protocol `0.10.0` is the

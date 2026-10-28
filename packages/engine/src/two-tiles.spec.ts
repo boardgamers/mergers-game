@@ -239,6 +239,7 @@ test("§15 twoTiles: both placements can be drafted privately before committing"
 		options: TWO_TILES,
 	});
 	const player = 0;
+	const original = structuredClone(state);
 	const draft = wrapper.move(
 		state,
 		{ type: "turn", from: state.log.length, moves: [place("5E"), place("9I")] },
@@ -247,6 +248,22 @@ test("§15 twoTiles: both placements can be drafted privately before committing"
 	assert.equal(draft.phase, "buy");
 	assert.deepEqual(draft.tentative, { player, from: state.log.length });
 	assert.equal(wrapper.toSave(draft), undefined);
+	assert.deepEqual(wrapper.timeIncrements(draft), [0, 0, 0]);
+	for (let revision = 0; revision < 3; revision++) {
+		const revised = wrapper.move(state, { type: "turn", from: state.log.length, moves: [place("9I")] }, player);
+		assert.equal(revised.phase, "place");
+		assert.equal(wrapper.toSave(revised), undefined);
+		assert.deepEqual(wrapper.timeIncrements(revised), [0, 0, 0]);
+		assert.deepEqual(state, original);
+	}
+	const committed = wrapper.move(
+		state,
+		{ type: "turn", from: state.log.length, moves: [place("5E"), place("9I"), buy] },
+		player
+	);
+	assert.equal(wrapper.toSave(committed), committed);
+	assert.deepEqual(wrapper.timeIncrements(committed), [1, 0, 0]);
+	assert.equal(committed.log.filter((entry) => entry.type === "move").length, 3);
 });
 
 test("§14.7 twoTiles games replay exactly", () => {
