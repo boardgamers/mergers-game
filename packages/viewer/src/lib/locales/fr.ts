@@ -17,6 +17,7 @@ export const fr: Catalog = {
 
 	loading: "Chargement de la partie…",
 	"status.place": "{name} doit poser une tuile",
+	"status.placeSecond": "{name} doit poser une deuxième tuile",
 	"status.found": "{name} doit nommer une nouvelle chaîne",
 	"status.survivor": "{name} doit choisir la chaîne qui survit à la fusion",
 	"status.defunctOrder": "{name} doit choisir l’ordre des chaînes absorbées",
@@ -93,6 +94,9 @@ export const fr: Catalog = {
 	"hand.dead": "morte : fusionnerait des chaînes sûres",
 	"hand.deadReplacement": "Remplacement à la fin de votre tour",
 	"hand.eighth": "impossible de fonder une 8e chaîne",
+	"hand.deadNextTurn": "Remplacement au début de votre prochain tour",
+	"hand.oneFounding": "impossible de fonder une deuxième chaîne ce tour-ci",
+	"hand.foundOrMerge": "impossible de fonder une chaîne et de fusionner dans le même tour",
 	"chains.label": "Chaînes d’hôtels",
 	"chains.title": "Chaînes",
 	"chains.chain": "Chaîne",
@@ -136,6 +140,7 @@ export const fr: Catalog = {
 	"seat.name": "{name} (place {seat})",
 	"log.label": "Journal de la partie",
 	"log.title": "Journal",
+	"log.limited": "Les coups précédents sont masqués jusqu'à la fin de la partie.",
 	"log.recent": "Afficher seulement les dernières lignes",
 	"log.all": {
 		one: "Afficher tout le journal ({count} de plus)",

@@ -1,5 +1,6 @@
 import { CHAIN_IDS, END_SIZE, SAFE_SIZE, type ChainId } from "./config.js";
 import { neighbours, type Tile } from "./tiles.js";
+import { blockedThisTurn } from "./two-tiles.js";
 import type { Cell, GameState } from "./types.js";
 
 export type Placement =
@@ -47,8 +48,11 @@ export function tileLegality(board: Cell[], tile: Tile): Legality {
 	return "playable";
 }
 
+/** Tiles `seat` may place now, including the rules.md §15 twoTiles limits on the active turn. */
 export function playableTiles(state: GameState, seat: number): Tile[] {
-	return (state.seats[seat]?.hand ?? []).filter((tile) => tileLegality(state.board, tile) === "playable");
+	return (state.seats[seat]?.hand ?? []).filter(
+		(tile) => tileLegality(state.board, tile) === "playable" && !blockedThisTurn(state, tile)
+	);
 }
 
 /** The tile plus every loose tile connected to it through other loose tiles. */

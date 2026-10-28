@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import { setTimeout as delay } from "node:timers/promises";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { preparedPosition } from "../packages/viewer/src/tutorial/lessons.ts";
 
@@ -148,7 +149,9 @@ try {
 				assert.equal(await page.locator(".stock-swap button").isEnabled(), true);
 			}
 			await preferences({ locale: "en" });
-			await page.locator(".panel").screenshot({ path: new URL(`stock-swap-${theme}-${width}.png`, output).pathname });
+			await page
+				.locator(".panel")
+				.screenshot({ path: fileURLToPath(new URL(`stock-swap-${theme}-${width}.png`, output)) });
 		}
 		const original = await page.evaluate(() => JSON.stringify(window.acquireDev.state));
 		for (let revision = 0; revision < 3; revision++) {
@@ -224,7 +227,9 @@ try {
 				);
 			}
 			await preferences({ locale: "en" });
-			await page.locator(".players").screenshot({ path: new URL(`net-worth-${theme}-${width}.png`, output).pathname });
+			await page
+				.locator(".players")
+				.screenshot({ path: fileURLToPath(new URL(`net-worth-${theme}-${width}.png`, output)) });
 		}
 		await page.evaluate(() => {
 			const state = structuredClone(window.acquireDev.state);
@@ -298,7 +303,7 @@ try {
 			);
 		}
 		await preferences({ locale: "en" });
-		await page.screenshot({ path: new URL(`merger-price-${width}.png`, output).pathname, fullPage: true });
+		await page.screenshot({ path: fileURLToPath(new URL(`merger-price-${width}.png`, output)), fullPage: true });
 	}
 	report.scenarios.push(
 		"post-merger price visible before trading; original sale price unchanged; all 17 locales at desktop, phone and 320px"
@@ -361,7 +366,7 @@ try {
 						await settle();
 						await page
 							.locator(".controls")
-							.screenshot({ path: new URL(`merger-shortcuts-${theme}-${width}.png`, output).pathname });
+							.screenshot({ path: fileURLToPath(new URL(`merger-shortcuts-${theme}-${width}.png`, output)) });
 					}
 				}
 			}
@@ -445,8 +450,10 @@ try {
 			await preferences({ locale: "en" });
 			await page
 				.locator("section.hand")
-				.screenshot({ path: new URL(`dead-tiles-${theme}-${width}.png`, output).pathname });
-			await page.locator(".frame").screenshot({ path: new URL(`safe-chains-${theme}-${width}.png`, output).pathname });
+				.screenshot({ path: fileURLToPath(new URL(`dead-tiles-${theme}-${width}.png`, output)) });
+			await page
+				.locator(".frame")
+				.screenshot({ path: fileURLToPath(new URL(`safe-chains-${theme}-${width}.png`, output)) });
 		}
 	}
 	report.scenarios.push(
@@ -530,7 +537,7 @@ try {
 			assert.equal(amount.weight, "600");
 			assert.equal(amount.numbers, "tabular-nums");
 		}
-		await page.screenshot({ path: new URL(`fullscreen-${theme}.png`, output).pathname });
+		await page.screenshot({ path: fileURLToPath(new URL(`fullscreen-${theme}.png`, output)) });
 	}
 	report.scenarios.push("full-window theme background, no outer gutters, wider board and permanently visible chat");
 	report.scenarios.push("consistent player colors, distinct chain names and emphasized cash in light/dark logs");
@@ -818,7 +825,7 @@ try {
 		await page.locator(".board").getByRole("button", { name: "Place 2A", exact: true }).click();
 		await page.locator(".choices button").filter({ hasText: "Luxor" }).click();
 		await page.waitForSelector("table.buy");
-		await page.screenshot({ path: new URL(`undo-${width}.png`, output).pathname, fullPage: true });
+		await page.screenshot({ path: fileURLToPath(new URL(`undo-${width}.png`, output)), fullPage: true });
 		await page.locator(".panel .primary").click();
 		await page.waitForFunction(() => window.acquireDev.state.turn === 2);
 		await settle();
@@ -878,7 +885,7 @@ try {
 				await settle();
 			}
 			const screenshot = await page.screenshot({
-				path: new URL(`${name}-${theme}.png`, output).pathname,
+				path: fileURLToPath(new URL(`${name}-${theme}.png`, output)),
 				clip: { x: 0, y: 0, width, height: captureHeight },
 			});
 			assert.equal(screenshot.readUInt32BE(16), width);
@@ -887,7 +894,7 @@ try {
 		}
 	}
 	await preferences({ locale: "fa", colorBlind: true });
-	await page.screenshot({ path: new URL("phone-fa.png", output).pathname, fullPage: true });
+	await page.screenshot({ path: fileURLToPath(new URL("phone-fa.png", output)), fullPage: true });
 	for (const width of [1280, 390]) {
 		await page.setViewportSize({ width, height: 900 });
 		for (const chapter of ["founding", "mergers", "scoring"]) {
@@ -979,7 +986,10 @@ try {
 				assert.equal(await page.locator("main .prices").count(), 1, "resumed completed lesson keeps references usable");
 				await page.locator("main .market .toggle").click();
 			}
-			await page.screenshot({ path: new URL(`tutorial-${chapter}-${width}.png`, output).pathname, fullPage: true });
+			await page.screenshot({
+				path: fileURLToPath(new URL(`tutorial-${chapter}-${width}.png`, output)),
+				fullPage: true,
+			});
 			await page.locator(".guide nav button").first().click();
 			const lastStep = { founding: 4, mergers: 6, scoring: 2 }[chapter];
 			await page.waitForSelector(`.acquire-tutorial[data-step="${lastStep}"][data-completed="false"]`);
@@ -1009,7 +1019,7 @@ try {
 					.click();
 				await page.locator("main .panel .primary").click();
 				await page.waitForSelector('.acquire-tutorial[data-step="1"]').catch(async (error) => {
-					await page.screenshot({ path: new URL("tutorial-failure.png", output).pathname, fullPage: true });
+					await page.screenshot({ path: fileURLToPath(new URL("tutorial-failure.png", output)), fullPage: true });
 					throw new Error(
 						`${chapter} ${locale} ${width}px: ${await page.locator("#app").innerText()}\n${errors.join("\n")}`,
 						{ cause: error }
@@ -1065,7 +1075,7 @@ try {
 				report.tutorialLayouts.push({ width, locale, chapter });
 				if (["en", "fr", "fa"].includes(locale)) {
 					await page.screenshot({
-						path: new URL(`explanation-${chapter}-${locale}-${width}.png`, output).pathname,
+						path: fileURLToPath(new URL(`explanation-${chapter}-${locale}-${width}.png`, output)),
 						fullPage: true,
 					});
 				}

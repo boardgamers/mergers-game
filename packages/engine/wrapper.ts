@@ -1,9 +1,10 @@
 import { applyTurnRequest, earnedTimeIncrements, isTurnRequest } from "./src/turn-draft.js";
+import { visibleLog } from "./src/limited-log.js";
 import { applyMove, currentSeat, dropPlayerSeats } from "./src/moves.js";
 import { replayGame } from "./src/replay.js";
 import { playerRankings, playerScores } from "./src/scoring.js";
 import { initGame } from "./src/setup.js";
-import { simpleLineAt } from "./src/simple.js";
+import { simpleLine, simpleLineAt } from "./src/simple.js";
 import type { GameState, LogEntry } from "./src/types.js";
 import { seatsOf, viewFor } from "./src/view.js";
 
@@ -71,8 +72,9 @@ export interface LogSliceOptions {
 	end?: number;
 }
 
-// Both endpoints are inclusive. The log is public (rules.md §13), so every viewer gets the same
-// slice. Each entry gets a `simple` line for BGS's last-move display.
+// Both endpoints are inclusive. The log is public (rules.md §13) except with limitedLog, where
+// entries before the player's window are placeholders. Each entry gets a `simple` line for
+// BGS's last-move display.
 export function logSlice(
 	data: GameState,
 	options?: LogSliceOptions
@@ -82,8 +84,12 @@ export function logSlice(
 } {
 	const start = Math.max(0, options?.start ?? 0);
 	const end = options?.end ?? data.log.length - 1;
+	const log = visibleLog(data, options?.player);
 	return {
-		log: data.log.slice(start, end + 1).map((entry, i) => ({ ...entry, simple: simpleLineAt(data, start + i) })),
+		log: log.slice(start, end + 1).map((entry, i) => ({
+			...entry,
+			simple: entry.type === "hidden" ? simpleLine(data, entry) : simpleLineAt(data, start + i),
+		})),
 		...(data.tentative && data.tentative.player === options?.player
 			? { preview: stripSecret(data, options.player) }
 			: {}),

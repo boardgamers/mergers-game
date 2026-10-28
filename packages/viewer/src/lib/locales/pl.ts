@@ -17,6 +17,7 @@ export const pl: Catalog = {
 
 	loading: "Wczytywanie gry…",
 	"status.place": "{name} kładzie płytkę",
+	"status.placeSecond": "{name} kładzie drugą płytkę",
 	"status.found": "{name} nazywa nową sieć",
 	"status.survivor": "{name} wybiera sieć, która przetrwa fuzję",
 	"status.defunctOrder": "{name} wybiera kolejność przejmowanych sieci",
@@ -94,6 +95,9 @@ export const pl: Catalog = {
 	"hand.dead": "martwa: połączyłaby bezpieczne sieci",
 	"hand.deadReplacement": "Wymiana na koniec twojej tury",
 	"hand.eighth": "nie można założyć 8. sieci",
+	"hand.deadNextTurn": "Wymiana na początku twojej następnej tury",
+	"hand.oneFounding": "nie można założyć drugiej sieci w tej turze",
+	"hand.foundOrMerge": "nie można w jednej turze założyć sieci i połączyć sieci",
 	"chains.label": "Sieci hoteli",
 	"chains.title": "Sieci",
 	"chains.chain": "Sieć",
@@ -136,6 +140,7 @@ export const pl: Catalog = {
 	"seat.name": "{name} (miejsce {seat})",
 	"log.label": "Dziennik gry",
 	"log.title": "Dziennik",
+	"log.limited": "Wcześniejsze ruchy są ukryte do końca gry.",
 	"log.recent": "Pokaż tylko ostatnie wpisy",
 	"log.all": {
 		one: "Pokaż cały dziennik (jeszcze {count})",

@@ -50,15 +50,19 @@ export const viewer = registerViewer<GameState, Move | TurnRequest>(
 				store.theme = dark ? "dark" : "light";
 			},
 			onReplayStart() {
-				sounds.onReplayStart();
 				const { start, end } = store.replayRange();
-				store.replayAt = end;
+				if (store.replayable) {
+					sounds.onReplayStart();
+					store.replayAt = end;
+				}
 				setReplayInfo({ start, current: end, end });
 			},
 			onReplayTo(index) {
 				const { start, end } = store.replayRange();
-				store.replayAt = Math.min(end, Math.max(start, index));
-				setReplayInfo({ start, current: store.replayAt, end });
+				if (store.replayable) {
+					store.replayAt = Math.min(end, Math.max(start, index));
+				}
+				setReplayInfo({ start, current: store.replayAt ?? end, end });
 			},
 			onReplayEnd() {
 				sounds.onReplayEnd();

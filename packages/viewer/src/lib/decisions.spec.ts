@@ -1,9 +1,27 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { applyMove, currentSeat, initGame, legalMoves, type GameState, type Move } from "acquire-engine";
+import {
+	applyMove,
+	currentSeat,
+	initGame,
+	legalMoves,
+	placementEffect,
+	tileLabel,
+	turnPlacements,
+	type GameState,
+	type Move,
+} from "acquire-engine";
 import { stripSecret } from "acquire-engine/wrapper.js";
 import { preparedPosition } from "../tutorial/lessons.ts";
-import { adjustShares, canBuy, canDispose, disposalPresets, movesFor, nextDefunctChoices } from "./decisions.ts";
+import {
+	adjustShares,
+	canBuy,
+	canDispose,
+	disposalPresets,
+	movesFor,
+	nextDefunctChoices,
+	turnLimit,
+} from "./decisions.ts";
 
 function playUntil(state: GameState, done: (state: GameState) => boolean): GameState {
 	for (let step = 0; !done(state); step++) {
@@ -103,4 +121,26 @@ test("disposal presets sell all or trade the available pairs without selling lef
 		}
 	}
 	assert.deepEqual(disposalPresets([]), { sell: undefined, trade: undefined });
+});
+
+test("two-tile limits explain exactly the tiles the engine blocks this turn", () => {
+	const state = initGame(4, { twoTiles: true }, "limits");
+	const limited = () =>
+		state.phase === "place" &&
+		state.seats[state.activeSeat]!.hand.some((tile) => turnLimit(state, state.activeSeat, tile) !== undefined);
+	playUntil(state, limited);
+	const seat = state.activeSeat;
+	const placeable = legalMoves(state).flatMap((move) => (move.type === "place" ? [move.tile] : []));
+	for (const tile of state.seats[seat]!.hand) {
+		const limit = turnLimit(state, seat, tile);
+		if (limit === undefined) {
+			continue;
+		}
+		assert.ok(!placeable.includes(tileLabel(tile)));
+		const founding = placementEffect(state.board, tile).kind === "found";
+		assert.equal(limit, founding && turnPlacements(state).founded ? "oneFounding" : "foundOrMerge");
+		assert.equal(turnLimit(state, (seat + 1) % 4, tile), undefined, "limits apply only to the active seat");
+	}
+	const view = stripSecret(state, seat);
+	assert.deepEqual(movesFor(view, [seat]), legalMoves(state));
 });

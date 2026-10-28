@@ -18,3 +18,5 @@ export * from "./src/view.js";
 export * from "./src/replay.js";
 export * from "./src/position.js";
 export * from "./src/simple.js";
+export { logWindowStart } from "./src/limited-log.js";
+export { blockedThisTurn, secondPlacementDue, turnPlacements } from "./src/two-tiles.js";

@@ -9,7 +9,7 @@
 		type GameState,
 		type Tile,
 	} from "acquire-engine";
-	import { ofType } from "./decisions";
+	import { ofType, turnLimit } from "./decisions";
 	import { chainName } from "./format";
 	import { CHAIN_STYLES } from "./palette";
 	import { safeBorders } from "./safeBorders";
@@ -36,6 +36,20 @@
 	const t = $derived(store.lang.t);
 	const playable = $derived(new Set(ofType(store.moves, "place").map((move) => parseTile(move.tile)!)));
 	const borders = $derived(safeBorders(state.board));
+
+	/** Why one of the viewer's tiles can't be placed now, or undefined. */
+	function heldNote(tile: Tile): string | undefined {
+		const legality = tileLegality(state.board, tile);
+		if (legality === "permanentlyUnplayable") {
+			return t("hand.dead");
+		}
+		if (legality === "temporarilyUnplayable") {
+			return t("hand.eighth");
+		}
+		const seat = store.seats.find((s) => state.seats[s]?.hand.includes(tile));
+		const limit = seat === undefined ? undefined : turnLimit(state, seat, tile);
+		return limit && t(`hand.${limit}`);
+	}
 	const safeChains = $derived(new Set(borders.map(({ chain }) => chain)));
 	const held = $derived(
 		new Set(
@@ -61,6 +75,7 @@
 				{@const cell = state.board[tile] ?? null}
 				{@const label = tileLabel(tile)}
 				{@const legality = held.has(tile) ? tileLegality(state.board, tile) : undefined}
+				{@const note = held.has(tile) ? heldNote(tile) : undefined}
 				{#if playable.has(tile) && cell === null}
 					<button
 						type="button"
@@ -76,20 +91,14 @@
 					<div
 						class="square empty"
 						class:held={held.has(tile)}
-						class:unavailable={legality !== undefined && legality !== "playable"}
+						class:unavailable={note !== undefined}
 						class:dead={legality === "permanentlyUnplayable"}
-						aria-label={legality === "permanentlyUnplayable"
-							? `${label} — ${t("hand.dead")}`
-							: legality === "temporarilyUnplayable"
-								? `${label} — ${t("hand.eighth")}`
-								: held.has(tile)
-									? `${label} — ${t("hand.yours")}`
-									: t("board.empty", { tile: label })}
-						title={legality === "permanentlyUnplayable"
-							? t("hand.dead")
-							: legality === "temporarilyUnplayable"
-								? t("hand.eighth")
-								: undefined}
+						aria-label={note !== undefined
+							? `${label} — ${note}`
+							: held.has(tile)
+								? `${label} — ${t("hand.yours")}`
+								: t("board.empty", { tile: label })}
+						title={note}
 					>
 						<span class="coord">{label}</span>
 					</div>

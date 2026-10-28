@@ -14,15 +14,24 @@
 	const t = $derived(store.lang.t);
 	let showAll = $state(false);
 
-	// Newest first; "turn" entries become headings that group the lines below them.
+	// Newest first; "turn" entries become headings that group the lines below them. With a
+	// limited log (rules.md §13), each run of entries the engine withheld becomes one note.
 	const lines = $derived(
 		game.log
 			.map((entry, index) => ({
 				index,
 				turn: entry.type === "turn",
-				parts: describeEntryParts(game, entry, store.lang),
+				hidden: entry.type === "hidden",
+				parts:
+					entry.type === "hidden"
+						? game.log[index - 1]?.type === "hidden"
+							? undefined
+							: [{ kind: "text" as const, text: t("log.limited") }]
+						: describeEntryParts(game, entry, store.lang),
 			}))
-			.filter((line): line is { index: number; turn: boolean; parts: LogPart[] } => line.parts !== undefined)
+			.filter(
+				(line): line is { index: number; turn: boolean; hidden: boolean; parts: LogPart[] } => line.parts !== undefined
+			)
 			.reverse()
 	);
 </script>
@@ -31,7 +40,7 @@
 	<h2>{t("log.title")}</h2>
 	<ol class="log">
 		{#each showAll ? lines : lines.slice(0, RECENT) as line (line.index)}
-			<li class:turn={line.turn}>
+			<li class:turn={line.turn} class:hidden={line.hidden}>
 				{#each line.parts as part}
 					{#if part.kind === "player" || part.kind === "chain"}
 						{@const color =
@@ -71,6 +80,11 @@
 		margin-top: 6px;
 		font-weight: 600;
 		background: var(--panel-alt);
+	}
+	.log li.hidden {
+		margin-top: 6px;
+		color: var(--ink-muted);
+		font-style: italic;
 	}
 	.name,
 	.money {

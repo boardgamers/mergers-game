@@ -17,6 +17,7 @@ export const ptBR: Catalog = {
 
 	loading: "Carregando o jogo…",
 	"status.place": "{name} deve colocar uma peça",
+	"status.placeSecond": "{name} deve colocar uma segunda peça",
 	"status.found": "{name} deve dar nome a uma nova rede",
 	"status.survivor": "{name} deve escolher qual rede sobrevive à fusão",
 	"status.defunctOrder": "{name} deve escolher a ordem das redes absorvidas",
@@ -93,6 +94,9 @@ export const ptBR: Catalog = {
 	"hand.dead": "morta: fundiria redes seguras",
 	"hand.deadReplacement": "Substituição no fim do seu turno",
 	"hand.eighth": "não dá para fundar uma 8ª rede",
+	"hand.deadNextTurn": "Substituição no início do seu próximo turno",
+	"hand.oneFounding": "não dá para fundar uma segunda rede neste turno",
+	"hand.foundOrMerge": "não dá para fundar uma rede e fundir no mesmo turno",
 	"chains.label": "Redes de hotéis",
 	"chains.title": "Redes",
 	"chains.chain": "Rede",
@@ -136,6 +140,7 @@ export const ptBR: Catalog = {
 	"seat.name": "{name} (lugar {seat})",
 	"log.label": "Registro do jogo",
 	"log.title": "Registro",
+	"log.limited": "As jogadas anteriores ficam ocultas até o fim da partida.",
 	"log.recent": "Mostrar só as linhas recentes",
 	"log.all": {
 		one: "Mostrar o registro inteiro (mais {count})",

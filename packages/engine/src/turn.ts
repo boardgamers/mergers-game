@@ -1,8 +1,10 @@
 import { activeChains, chainSize, playableTiles, tileLegality } from "./board.js";
-import { AUTO_TURN_LIMIT, HAND_SIZE } from "./config.js";
+import { AUTO_TURN_LIMIT } from "./config.js";
+import { handSize } from "./options.js";
 import { sharePrice } from "./prices.js";
 import { canAnnounce, endConditionMet, endGame } from "./scoring.js";
 import type { Tile } from "./tiles.js";
+import { secondPlacementDue } from "./two-tiles.js";
 import type { GameState } from "./types.js";
 
 export function drawTile(state: GameState): Tile | undefined {
@@ -40,6 +42,10 @@ export function startTurn(state: GameState): void {
 		state.turn += 1;
 		state.placedThisTurn = false;
 		state.log.push({ type: "turn", seat: state.activeSeat });
+		if (state.options.twoTiles) {
+			// rules.md §15 twoTiles: dead tiles are replaced at the start of the turn instead.
+			replaceDeadTiles(state);
+		}
 		if (playableTiles(state, state.activeSeat).length > 0 || canAnnounce(state)) {
 			state.phase = "place";
 			return;
@@ -55,7 +61,18 @@ export function startTurn(state: GameState): void {
 	}
 }
 
-/** Called once placement (and any founding or merger) is resolved. */
+/**
+ * Called once a placement and everything it caused (a founding, a merger, bank tiles) is
+ * resolved. With twoTiles the seat then places its second tile, if any is playable.
+ */
+export function afterPlacement(state: GameState): void {
+	if (secondPlacementDue(state) && playableTiles(state, state.activeSeat).length > 0) {
+		state.phase = "place";
+		return;
+	}
+	enterBuyPhase(state);
+}
+
 export function enterBuyPhase(state: GameState): void {
 	if (buyStepAvailable(state) || canAnnounce(state)) {
 		state.phase = "buy";
@@ -70,12 +87,8 @@ export function endTurn(state: GameState): void {
 	}
 }
 
-/**
- * rules.md §4.4-4.5: replace permanently unplayable tiles and refill the hand. Then either end
- * the game (an announcement this turn, or the §11.1 stall rule) or pass the turn on.
- * Returns whether the game ended.
- */
-function finishTurn(state: GameState): boolean {
+/** rules.md §5.3: discard the active seat's permanently unplayable tiles and refill the hand. */
+function replaceDeadTiles(state: GameState): void {
 	const seat = state.seats[state.activeSeat]!;
 	const dead = seat.hand.filter((tile) => tileLegality(state.board, tile) === "permanentlyUnplayable");
 	if (dead.length > 0) {
@@ -83,8 +96,13 @@ function finishTurn(state: GameState): boolean {
 		state.removed.push(...dead);
 		state.log.push({ type: "discarded", seat: state.activeSeat, tiles: dead });
 	}
+	refillHand(state);
+}
+
+function refillHand(state: GameState): void {
+	const seat = state.seats[state.activeSeat]!;
 	let drawn = 0;
-	while (seat.hand.length < HAND_SIZE) {
+	while (seat.hand.length < handSize(state.options)) {
 		const tile = drawTile(state);
 		if (tile === undefined) {
 			break;
@@ -94,6 +112,19 @@ function finishTurn(state: GameState): boolean {
 	}
 	if (drawn > 0) {
 		state.log.push({ type: "drew", seat: state.activeSeat, count: drawn });
+	}
+}
+
+/**
+ * rules.md §4.4-4.5: replace permanently unplayable tiles (with twoTiles, only refill) and
+ * draw. Then either end the game (an announcement this turn, or the §11.1 stall rule) or pass
+ * the turn on. Returns whether the game ended.
+ */
+function finishTurn(state: GameState): boolean {
+	if (state.options.twoTiles) {
+		refillHand(state);
+	} else {
+		replaceDeadTiles(state);
 	}
 	state.turnsWithoutPlacement = state.placedThisTurn ? 0 : state.turnsWithoutPlacement + 1;
 	if (state.endAnnounced !== null) {

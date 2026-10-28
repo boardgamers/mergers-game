@@ -52,7 +52,7 @@ export function simpleLineAt(state: GameState, index: number): string {
 
 /**
  * The turn that ended just before the "turn" entry at `index`, most important first: the
- * placement (or the founding or merger it caused), then purchases, then an announcement.
+ * placements (or the foundings or mergers they caused), then purchases, then an announcement.
  * For example "Ann merged Luxor into Tower, bought 2 Tower".
  */
 export function turnSummary(state: GameState, index: number): string {
@@ -64,18 +64,20 @@ export function turnSummary(state: GameState, index: number): string {
 		return "The game started";
 	}
 	const seat = (state.log[start] as Extract<LogEntry, { type: "turn" }>).seat;
-	let placement = "placed no tile";
+	// One line per placed tile (two with twoTiles), each replaced by what it caused.
+	const placements: string[] = [];
 	let bankMerger = false;
 	const parts: string[] = [];
 	for (const entry of state.log.slice(start + 1, index)) {
 		if (entry.type === "move" && entry.move.type === "place") {
-			placement = `placed ${entry.move.tile}`;
+			placements.push(`placed ${entry.move.tile}`);
 		} else if (entry.type === "founded") {
-			placement = `founded ${chainName(entry.chain)}`;
+			placements[placements.length - 1] = `founded ${chainName(entry.chain)}`;
 		} else if (entry.type === "merger") {
 			bankMerger = entry.byBank === true;
-		} else if (entry.type === "mergerPlan" && !bankMerger && !placement.startsWith("merged")) {
-			placement = `merged ${list(entry.defunct.map(chainName))} into ${chainName(entry.survivor)}`;
+		} else if (entry.type === "mergerPlan" && !bankMerger && !placements.at(-1)!.startsWith("merged")) {
+			placements[placements.length - 1] =
+				`merged ${list(entry.defunct.map(chainName))} into ${chainName(entry.survivor)}`;
 		} else if (entry.type === "swapped") {
 			parts.push(`swapped ${entry.count} ${chainName(entry.from)} for ${entry.count} ${chainName(entry.to)}`);
 		} else if (entry.type === "bought" && Object.keys(entry.shares).length > 0) {
@@ -86,7 +88,7 @@ export function turnSummary(state: GameState, index: number): string {
 			parts.push("left the game");
 		}
 	}
-	return `${seatName(state, seat)} ${[placement, ...parts].join(", ")}`;
+	return `${seatName(state, seat)} ${[...(placements.length > 0 ? placements : ["placed no tile"]), ...parts].join(", ")}`;
 }
 
 export function simpleLine(state: GameState, entry: LogEntry): string {
@@ -200,6 +202,8 @@ export function simpleLine(state: GameState, entry: LogEntry): string {
 			return `${seat(entry.seat)} sold ${entry.shares} ${chainName(entry.chain)} for ${money(entry.proceeds)}`;
 		case "result":
 			return `Final cash: ${list(entry.cash.map((cash, s) => `${seat(s)} ${money(cash)}`))}`;
+		case "hidden":
+			return "An earlier move (hidden until the game ends)";
 	}
 	return "";
 }

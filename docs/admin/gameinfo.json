@@ -121,6 +121,18 @@
 					"label": "Unlimited"
 				}
 			]
+		},
+		{
+			"name": "twoTiles",
+			"label": "Two tiles per turn (hands of 8)",
+			"type": "checkbox",
+			"default": false
+		},
+		{
+			"name": "limitedLog",
+			"label": "Limited game log (only last round)",
+			"type": "checkbox",
+			"default": false
 		}
 	],
 	"settings": [],

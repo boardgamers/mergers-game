@@ -22,17 +22,20 @@ function lcg(seed: number): () => number {
 function optionCombinations(players: number): Record<string, unknown>[] {
 	const combos: Record<string, unknown>[] = [];
 	for (const publicHoldings of [false, true]) {
-		for (const autoEnd of [false, true]) {
-			for (const endSize of ["41", "31"]) {
-				for (const twoPlayerMode of players === 2 ? ["bank", "fourHands"] : ["bank"]) {
-					for (const teamPlay of players === 4 ? [false, true] : [false]) {
-						combos.push({
-							...(publicHoldings ? { publicHoldings } : {}),
-							...(autoEnd ? { autoEnd } : {}),
-							...(teamPlay ? { teamPlay } : {}),
-							twoPlayerMode,
-							endSize,
-						});
+		for (const twoTiles of [false, true]) {
+			for (const autoEnd of [false, true]) {
+				for (const endSize of ["41", "31"]) {
+					for (const twoPlayerMode of players === 2 ? ["bank", "fourHands"] : ["bank"]) {
+						for (const teamPlay of players === 4 ? [false, true] : [false]) {
+							combos.push({
+								...(publicHoldings ? { publicHoldings } : {}),
+								...(autoEnd ? { autoEnd } : {}),
+								...(twoTiles ? { twoTiles } : {}),
+								...(teamPlay ? { teamPlay } : {}),
+								twoPlayerMode,
+								endSize,
+							});
+						}
 					}
 				}
 			}
@@ -133,6 +136,6 @@ for (let players = 2; players <= 6; players++) {
 test("§15 the simulation covers every valid option combination", () => {
 	assert.deepEqual(
 		[2, 3, 4, 5, 6].map((players) => optionCombinations(players).length),
-		[16, 8, 16, 8, 8]
+		[32, 16, 32, 16, 16]
 	);
 });

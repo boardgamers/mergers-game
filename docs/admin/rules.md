@@ -37,6 +37,20 @@ A chain of 11 or more tiles is **safe**: it can never be taken over.
 - A tile that would found an 8th chain can't be played while all 7 chains are on the board. You keep it; it becomes playable when a chain disappears.
 - If none of your tiles can be played, you skip placing and may still buy stock.
 
+### Two tiles per turn
+
+If the game uses **Two tiles per turn**, each player holds 8 tiles instead of 6 and places two tiles every turn.
+
+At the start of your turn, swap out any dead tiles. Then place your first tile and settle anything it causes, including a full merger with everyone's sell, trade or keep decisions, before placing your second. After both tiles, buy up to 3 shares at the prices on the board, then draw back up to 8.
+
+You may found only one chain per turn, and you can't found a chain and cause a merger in the same turn, in either order. You can cause two mergers, one with each tile. Example: your first tile merges Luxor into Tower, so your second tile can merge again or grow a chain, but it can't found a new one.
+
+You must play a second tile if any tile in your hand is legal after the first. If none is, go straight to buying. A tile that becomes dead during your turn, for example because your first tile made a chain safe, can't be your second tile; it's swapped out at the start of your next turn.
+
+You can announce the end of the game before your first tile, between your two tiles, or while buying, as long as an end condition holds at that moment.
+
+In a two-player game, the bank's tiles are placed right after the merger that drew them, so between your two tiles if your first tile caused it. Mergers caused by the bank's tiles don't count toward your two mergers or the founding rule. If a player leaves, the game places their first two legal tiles for them.
+
 ## Mergers
 
 The **largest** chain survives and takes over the others. If chains tie for largest, the player who placed the tile chooses the survivor. Sizes are counted before the merging tile is placed.
@@ -112,10 +126,18 @@ With two players, the bank also acts as a shareholder whenever bonuses are paid.
 
 ## What you can see
 
-Your tiles are private. Unless the game was created with **public holdings**, each player's cash and shares are private too; the game log is always public, so a careful player can work them out.
+Your tiles are private. Unless the game was created with **public holdings**, each player's cash and shares are private too; the game log is public (unless the game uses a limited game log, below), so a careful player can work them out.
+
+### Limited game log
+
+Much of Acquire is remembering who bought what. If the game uses **Limited game log**, the log only shows what has happened since your last turn. During a merger, the log still shows everything about that merger, even if it started before your last turn. The full log opens up once the game ends.
+
+Because replaying the game would show the full history, replay is only available after the game ends when this setting is on.
 
 ## Game options
 
+- **Limited game log:** the log shows only what happened since your last turn, until the game ends (see above).
+- **Two tiles per turn:** hands of 8 tiles and two tiles placed every turn (see above).
 - **Stock swap:** optional 1:1 exchanges with the bank before buying; Off / 3 / 5 / 7 / Unlimited shares per turn (see above).
 - **Public holdings:** everyone's cash and shares are visible.
 - **Team play** (4 players only): seats 1 and 3 play against seats 2 and 4; each team's money is added together at the end.

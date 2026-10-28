@@ -21,6 +21,7 @@ export const BOARD_ROWS = 9;
 export const TILE_COUNT = BOARD_COLUMNS * BOARD_ROWS;
 export const STARTING_CASH = 6000;
 export const HAND_SIZE = 6;
+export const TWO_TILE_HAND_SIZE = 8;
 export const SHARES_PER_CHAIN = 25;
 export const SAFE_SIZE = 11;
 export const END_SIZE = 41;

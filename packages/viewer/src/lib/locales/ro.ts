@@ -17,6 +17,7 @@ export const ro: Catalog = {
 
 	loading: "Se încarcă jocul…",
 	"status.place": "{name} trebuie să plaseze o piesă",
+	"status.placeSecond": "{name} trebuie să plaseze a doua piesă",
 	"status.found": "{name} trebuie să numească un lanț nou",
 	"status.survivor": "{name} trebuie să aleagă lanțul care supraviețuiește fuziunii",
 	"status.defunctOrder": "{name} trebuie să aleagă ordinea lanțurilor absorbite",
@@ -93,6 +94,9 @@ export const ro: Catalog = {
 	"hand.dead": "moartă: ar uni lanțuri sigure",
 	"hand.deadReplacement": "Înlocuire la sfârșitul turei tale",
 	"hand.eighth": "nu se poate înființa un al 8-lea lanț",
+	"hand.deadNextTurn": "Înlocuire la începutul turei tale următoare",
+	"hand.oneFounding": "nu se poate înființa un al doilea lanț în această tură",
+	"hand.foundOrMerge": "nu se poate înființa un lanț și face o fuziune în aceeași tură",
 	"chains.label": "Lanțuri hoteliere",
 	"chains.title": "Lanțuri",
 	"chains.chain": "Lanț",
@@ -136,6 +140,7 @@ export const ro: Catalog = {
 	"seat.name": "{name} (locul {seat})",
 	"log.label": "Jurnalul jocului",
 	"log.title": "Jurnal",
+	"log.limited": "Mutările anterioare sunt ascunse până la sfârșitul jocului.",
 	"log.recent": "Arată doar ultimele rânduri",
 	"log.all": {
 		one: "Arată tot jurnalul (încă {count})",

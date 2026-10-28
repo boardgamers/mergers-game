@@ -3,6 +3,7 @@ import {
 	HIDDEN,
 	currentSeat,
 	merger,
+	secondPlacementDue,
 	tileLabel,
 	type ChainId,
 	type GameState,
@@ -53,7 +54,7 @@ export function pendingDecision(state: GameState, lang: Lang): string {
 	const name = seatName(state, seat, lang);
 	switch (state.phase) {
 		case "place":
-			return lang.t("status.place", { name });
+			return lang.t(secondPlacementDue(state) ? "status.placeSecond" : "status.place", { name });
 		case "found":
 			return lang.t("status.found", { name });
 		case "survivor":
@@ -209,6 +210,8 @@ export function describeEntry(
 			});
 		case "result":
 			return t("log.result", { results: list(entry.cash.map((cash, s) => `${seat(s)} ${money(cash)}`)) });
+		case "hidden":
+			return undefined;
 	}
 }
 

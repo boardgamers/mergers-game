@@ -1,4 +1,4 @@
-import { END_SIZE } from "./config.js";
+import { END_SIZE, HAND_SIZE, TWO_TILE_HAND_SIZE } from "./config.js";
 
 /** rules.md §15, after normalisation against the player count. */
 export interface GameOptions {
@@ -9,6 +9,10 @@ export interface GameOptions {
 	endSize: number;
 	/** Omitted when off, preserving the init log of games created before this variant. */
 	stockSwap?: 3 | 5 | 7 | "unlimited";
+	/** Omitted when off, like stockSwap. */
+	twoTiles?: true;
+	/** Omitted when off, like stockSwap. */
+	limitedLog?: true;
 }
 
 export interface IgnoredOption {
@@ -80,7 +84,19 @@ export function normalizeOptions(
 		}
 	}
 
+	if (raw.twoTiles === true) {
+		options.twoTiles = true;
+	}
+	if (raw.limitedLog === true) {
+		options.limitedLog = true;
+	}
+
 	return { options, ignored };
+}
+
+/** rules.md §15 twoTiles: hands hold 8 tiles instead of 6. */
+export function handSize(options: GameOptions): number {
+	return options.twoTiles ? TWO_TILE_HAND_SIZE : HAND_SIZE;
 }
 
 /** Internal seats per real player: fourHands gives each of the 2 players two seats. */

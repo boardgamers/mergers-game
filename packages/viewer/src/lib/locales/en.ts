@@ -20,6 +20,7 @@ export const en = {
 
 	// Status bar
 	"status.place": "{name} to place a tile",
+	"status.placeSecond": "{name} to place a second tile",
 	"status.found": "{name} to name a new chain",
 	"status.survivor": "{name} to choose which chain survives the merger",
 	"status.defunctOrder": "{name} to choose the order of the defunct chains",
@@ -96,6 +97,9 @@ export const en = {
 	"hand.dead": "dead: would merge safe chains",
 	"hand.deadReplacement": "Replaced at the end of your turn",
 	"hand.eighth": "can't found an 8th chain",
+	"hand.deadNextTurn": "Replaced at the start of your next turn",
+	"hand.oneFounding": "can't found a second chain this turn",
+	"hand.foundOrMerge": "can't both found a chain and merge in one turn",
 
 	// Chain and price tables
 	"chains.label": "Hotel chains",
@@ -144,6 +148,7 @@ export const en = {
 	// Log
 	"log.label": "Game log",
 	"log.title": "Log",
+	"log.limited": "Earlier moves are hidden until the game ends.",
 	"log.recent": "Show recent lines only",
 	"log.all": { one: "Show the whole log ({count} more)", other: "Show the whole log ({count} more)" },
 	"log.init": { one: "New game for {count} player", other: "New game for {count} players" },

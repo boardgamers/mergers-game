@@ -17,6 +17,7 @@ export const ru: Catalog = {
 
 	loading: "Загрузка игры…",
 	"status.place": "{name}: выложить фишку",
+	"status.placeSecond": "{name}: выложить вторую фишку",
 	"status.found": "{name}: назвать новую сеть",
 	"status.survivor": "{name}: выбрать сеть, которая уцелеет при слиянии",
 	"status.defunctOrder": "{name}: выбрать порядок поглощаемых сетей",
@@ -94,6 +95,9 @@ export const ru: Catalog = {
 	"hand.dead": "мёртвая: слила бы защищённые сети",
 	"hand.deadReplacement": "Заменяются в конце вашего хода",
 	"hand.eighth": "нельзя основать 8-ю сеть",
+	"hand.deadNextTurn": "Заменяются в начале вашего следующего хода",
+	"hand.oneFounding": "нельзя основать вторую сеть за этот ход",
+	"hand.foundOrMerge": "нельзя за один ход и основать сеть, и провести слияние",
 	"chains.label": "Гостиничные сети",
 	"chains.title": "Сети",
 	"chains.chain": "Сеть",
@@ -136,6 +140,7 @@ export const ru: Catalog = {
 	"seat.name": "{name} (место {seat})",
 	"log.label": "Журнал игры",
 	"log.title": "Журнал",
+	"log.limited": "Предыдущие ходы скрыты до конца игры.",
 	"log.recent": "Показать только последние строки",
 	"log.all": {
 		one: "Показать весь журнал (ещё {count})",

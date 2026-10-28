@@ -29,7 +29,7 @@ async function loadBuiltViewer(): Promise<typeof import("./viewer").viewer> {
 const players = Math.min(6, Math.max(2, Number(params.get("players") ?? 4)));
 const seed = params.get("seed") ?? "dev";
 const options: Record<string, unknown> = {};
-for (const key of ["publicHoldings", "teamPlay", "autoEnd"]) {
+for (const key of ["publicHoldings", "teamPlay", "autoEnd", "twoTiles", "limitedLog"]) {
 	if (params.get(key) === "1") {
 		options[key] = true;
 	}

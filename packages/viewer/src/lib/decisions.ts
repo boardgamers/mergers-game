@@ -1,11 +1,13 @@
 // Which choices the viewer offers. Validity always comes from the engine: these helpers only
 // filter and look up engine.legalMoves(), so no rule is re-implemented here.
 import {
+	blockedThisTurn,
 	CHAIN_IDS,
 	chainSize,
 	currentSeat,
 	legalMoves,
 	placementEffect,
+	turnPlacements,
 	type ChainId,
 	type GameState,
 	type Move,
@@ -41,6 +43,19 @@ export function describePlacement(state: GameState, tile: Tile, lang: Lang): str
 				chains: lang.list(effect.chains.map((chain) => `${chainName(chain)} (${chainSize(state.board, chain)})`)),
 			});
 	}
+}
+
+/**
+ * Why `tile` in `seat`'s hand can't be placed this turn under the two-tiles limits
+ * (rules.md §4.1), or undefined when they don't block it.
+ */
+export function turnLimit(state: GameState, seat: number, tile: Tile): "oneFounding" | "foundOrMerge" | undefined {
+	if (seat !== state.activeSeat || state.ended || !blockedThisTurn(state, tile)) {
+		return undefined;
+	}
+	return placementEffect(state.board, tile).kind === "found" && turnPlacements(state).founded
+		? "oneFounding"
+		: "foundOrMerge";
 }
 
 function sameShares(a: Partial<Shares>, b: Partial<Shares>): boolean {

@@ -1,5 +1,5 @@
-import { CHAIN_IDS, HAND_SIZE, MAX_PLAYERS, MIN_PLAYERS, SHARES_PER_CHAIN, STARTING_CASH } from "./config.js";
-import { normalizeOptions, seatOwners } from "./options.js";
+import { CHAIN_IDS, MAX_PLAYERS, MIN_PLAYERS, SHARES_PER_CHAIN, STARTING_CASH } from "./config.js";
+import { handSize, normalizeOptions, seatOwners } from "./options.js";
 import { shuffle } from "./prng.js";
 import { allTiles } from "./tiles.js";
 import { drawTile, startTurn } from "./turn.js";
@@ -60,7 +60,7 @@ export function initGame(players: number, rawOptions: Record<string, unknown>, s
 	state.log.push({ type: "turnOrder", tiles: orderTiles, first });
 
 	for (const seat of state.seats) {
-		for (let i = 0; i < HAND_SIZE; i++) {
+		for (let i = 0; i < handSize(options); i++) {
 			seat.hand.push(drawTile(state)!);
 		}
 	}

@@ -107,9 +107,13 @@ export class ViewerStore {
 		}
 	}
 
+	/** With a limited log (rules.md §13), replay waits until the game ends and the log is whole. */
+	replayable = $derived(!this.state?.log.some((entry) => entry.type === "hidden"));
+
 	/** The replay range BGS shows in its controls: setup done, up to the live position. */
 	replayRange(): { start: number; end: number } {
-		return { start: replayStart(this.state!), end: this.state!.log.length };
+		const end = this.state!.log.length;
+		return { start: this.replayable ? replayStart(this.state!) : end, end };
 	}
 
 	send(move: Move): void {

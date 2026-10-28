@@ -17,6 +17,7 @@ export const it: Catalog = {
 
 	loading: "Caricamento della partita…",
 	"status.place": "{name} deve piazzare una tessera",
+	"status.placeSecond": "{name} deve piazzare una seconda tessera",
 	"status.found": "{name} deve dare un nome a una nuova catena",
 	"status.survivor": "{name} deve scegliere quale catena sopravvive alla fusione",
 	"status.defunctOrder": "{name} deve scegliere l'ordine delle catene assorbite",
@@ -93,6 +94,9 @@ export const it: Catalog = {
 	"hand.dead": "morta: fonderebbe catene sicure",
 	"hand.deadReplacement": "Sostituite alla fine del tuo turno",
 	"hand.eighth": "non si può fondare un'8ª catena",
+	"hand.deadNextTurn": "Sostituite all'inizio del tuo prossimo turno",
+	"hand.oneFounding": "non si può fondare una seconda catena in questo turno",
+	"hand.foundOrMerge": "non si può fondare una catena e fondere nello stesso turno",
 	"chains.label": "Catene alberghiere",
 	"chains.title": "Catene",
 	"chains.chain": "Catena",
@@ -137,6 +141,7 @@ export const it: Catalog = {
 	"seat.name": "{name} (posto {seat})",
 	"log.label": "Registro della partita",
 	"log.title": "Registro",
+	"log.limited": "Le mosse precedenti restano nascoste fino alla fine della partita.",
 	"log.recent": "Mostra solo le righe recenti",
 	"log.all": {
 		one: "Mostra tutto il registro (altre {count})",

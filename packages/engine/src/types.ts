@@ -78,7 +78,9 @@ export type LogEntry =
 	| { type: "announced"; seat: number }
 	| { type: "gameEnd"; reason: "announced" | "condition" | "stall" | "dropped" }
 	| { type: "finalSale"; seat: number; chain: ChainId; shares: number; proceeds: number }
-	| { type: "result"; cash: number[]; ranks: number[] };
+	| { type: "result"; cash: number[]; ranks: number[] }
+	/** Only in a player's view: an entry from before the limitedLog window (rules.md §13). */
+	| { type: "hidden" };
 
 export interface GameState {
 	/** Transient response only; toSave never persists this private draft. */

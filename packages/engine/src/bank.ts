@@ -1,7 +1,7 @@
 import { connectedLoose, placementEffect, tileLegality, chainSize } from "./board.js";
 import { startMerger } from "./merger.js";
 import { tileColumn } from "./tiles.js";
-import { drawTile, enterBuyPhase } from "./turn.js";
+import { afterPlacement, drawTile } from "./turn.js";
 import type { BankHolding, GameState } from "./types.js";
 
 /** rules.md §12/§15: the bank is a third shareholder with exactly 2 players and twoPlayerMode "bank". */
@@ -31,14 +31,15 @@ export function bankHolding(state: GameState, fate: "wait" | "setAside"): Omit<B
 }
 
 /**
- * rules.md §12.1.4: place waiting bank tiles in draw order, before the active player's buy step.
+ * rules.md §12.1.4: place waiting bank tiles in draw order, before the active player's buy step
+ * (or, with twoTiles, before their second tile).
  * A tile that causes a merger starts it; when that merger completes it calls back here, so the
  * queue (including tiles drawn by that merger) continues where it left off.
  */
 export function placeNextBankTile(state: GameState): void {
 	const tile = state.bankTiles.shift();
 	if (tile === undefined) {
-		enterBuyPhase(state);
+		afterPlacement(state);
 		return;
 	}
 	if (tileLegality(state.board, tile) === "permanentlyUnplayable") {

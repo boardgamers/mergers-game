@@ -15,7 +15,8 @@ import { maxStockSwap, swapStock } from "./stock-swap.js";
 import { sharePrice } from "./prices.js";
 import { canAnnounce, endGame } from "./scoring.js";
 import { parseTile, tileLabel, type Tile } from "./tiles.js";
-import { endTurn, enterBuyPhase } from "./turn.js";
+import { afterPlacement, endTurn, enterBuyPhase } from "./turn.js";
+import { blockedThisTurn } from "./two-tiles.js";
 import type { GameState, Move, Shares } from "./types.js";
 
 export function currentSeat(state: GameState): number | undefined {
@@ -45,7 +46,8 @@ export function sanitizeMove(state: GameState, raw: unknown, seat: number): Move
 		throw new Error("A move must be an object");
 	}
 	if (raw.type === "announce") {
-		// rules.md §4/§11.1: before placing or during the buy step, checked at this moment.
+		// rules.md §4/§11.1: before placing (with twoTiles, also before the second tile) or
+		// during the buy step, checked at this moment.
 		if (state.phase !== "place" && state.phase !== "buy") {
 			throw new Error("The end can only be announced before placing a tile or while buying");
 		}
@@ -84,6 +86,9 @@ export function sanitizeMove(state: GameState, raw: unknown, seat: number): Move
 			}
 			if (tileLegality(state.board, tile) !== "playable") {
 				throw new Error(`Tile ${tileLabel(tile)} cannot be played now`);
+			}
+			if (blockedThisTurn(state, tile)) {
+				throw new Error("A turn cannot found two chains, or both found a chain and cause a merger");
 			}
 			return { type: "place", tile: tileLabel(tile) };
 		}
@@ -251,7 +256,7 @@ function perform(state: GameState, move: Move, seat: number, auto: boolean): voi
 			break;
 		case "found":
 			foundChain(state, move.chain);
-			enterBuyPhase(state);
+			afterPlacement(state);
 			break;
 		case "survivor":
 			setSurvivor(state, move.chain);
@@ -297,7 +302,7 @@ function placeTile(state: GameState, tile: Tile): void {
 		}
 		foundChain(state, available[0]!);
 	}
-	enterBuyPhase(state);
+	afterPlacement(state);
 }
 
 /** rules.md §6. */
