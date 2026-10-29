@@ -53,7 +53,7 @@ player.
 
 1. **Place tile** (§5). May trigger **Found chain** (§6) or **Merger** (§7), which fully
    resolve before continuing.
-2. **Buy stock** (§9). Optional, up to 3 shares.
+2. **Buy stock** (§9). Optional, up to 3 shares by default (4 or 5 with the setup variant).
 3. **End-of-game announcement** (§11). Optional. **[DECISION]** Allowed at exactly two
    points: before placing a tile, and during the buy step (§11.1).
 4. **Replace dead tiles** (§5.3).
@@ -208,7 +208,10 @@ can be renamed later without touching game logic.
 ## 9. Buying Stock
 
 1. After placing (or skipping placement), the active player may buy **0 to 3 shares**
-   in total, across one, two, or three active chains.
+   in total across active chains. The optional **Shares per turn** setting (`sharesPerTurn`)
+   raises this total to **4** or **5**. The allowance applies once per turn, including
+   two-tile turns and each seat in four-hands games; founding gifts and merger trades do
+   not use it. Existing games and tutorials keep the standard limit of 3.
 2. Shares can only be bought in chains that are on the board and have shares left in the
    bank.
 3. The price of each share is based on the chain's size **after** this turn's placement
@@ -233,7 +236,7 @@ and the seat must afford any payment. No borrowing or direct player trades.
 
 Off is the default. Limits 3, 5 or 7 count shares **given** across all exchanges that turn;
 Unlimited has no share-count cap. Allowances reset for each seat's turn, including four hands.
-Normal purchases of up to 3 shares remain separate and end the turn. An exchange may fund
+Normal purchases use their own `sharesPerTurn` limit (3 by default) and end the turn. An exchange may fund
 those purchases. A swap-enabled buy step is not skipped for lack of cash or secret holdings
 when at least two chains are active and the bank has stock in one. Dropped players skip swaps.
 Swaps and their cash differences are public once committed. Until buying ends the turn,
@@ -380,6 +383,7 @@ switches on one engine, not as separate code paths. Defaults reproduce the stand
 | `teamPlay` | true / false | false | Only applies with exactly 4 players. Seats 1 and 3 form one team, seats 2 and 4 the other. All rules are unchanged; at final scoring each team's cash is added together and the team with more wins. **[DECISION]** With `publicHoldings` off, teammates still cannot see each other's holdings. |
 | `twoPlayerMode` | `bank` / `fourHands` | `bank` | Only has an effect with exactly 2 players. `bank` uses §12. `fourHands` runs a normal 4-seat game where each player controls two seats (player A has seats 1 and 3, player B has seats 2 and 4), with no bank shareholder. **[DECISION]** The player who controls the single richest seat wins; seats are not combined. |
 | `autoEnd` | true / false | false | When true, the game ends automatically at the end of the turn in which an end condition (§11.1) first holds, instead of waiting for an announcement. |
+| `sharesPerTurn` | 3 / 4 / 5 | 3 | Maximum shares purchased per turn in total across all active chains (house rule). Independent of stock swaps; see §9. |
 | `stockSwap` | `off` / 3 / 5 / 7 / `unlimited` | `off` | Optional 1:1 exchanges with the bank before buying, paying or receiving the price difference. See §9.1. |
 | `twoTiles` | true / false | false | Hands of 8 tiles and two placements per turn (house rule). See §4.1. |
 | `limitedLog` | true / false | false | The log shows only what happened since your last turn until the game ends (house rule). See §13. |

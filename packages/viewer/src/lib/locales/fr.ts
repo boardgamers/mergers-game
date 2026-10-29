@@ -2,7 +2,8 @@ import type { Catalog } from "../i18n.ts";
 
 export const fr: Catalog = {
 	"swap.title": "Échange d’actions",
-	"swap.note": "Échangez à 1 contre 1 au prix actuel avant d’acheter. Vous pouvez toujours acheter jusqu’à 3 actions.",
+	"swap.note":
+		"Échangez à 1 contre 1 au prix actuel avant d’acheter. Vous pouvez toujours acheter jusqu’à {limit} actions.",
 	"swap.remaining": "{count} restantes ce tour",
 	"swap.unlimited": "Illimité",
 	"swap.give": "Donner (vos actions)",
@@ -72,14 +73,14 @@ export const fr: Catalog = {
 	"dispose.tradeFewer": "Échanger deux de moins",
 	"dispose.tradeMore": "Échanger deux de plus",
 	"dispose.confirm": "Confirmer",
-	"buy.prompt": "Achetez jusqu’à 3 actions. Les prix restent fixes pendant ce tour.",
+	"buy.prompt": "Achetez jusqu’à {limit} actions. Les prix restent fixes pendant ce tour.",
 	"buy.chain": "Chaîne",
 	"buy.price": "Prix",
 	"buy.bank": "Banque",
 	"buy.buy": "Achat",
 	"buy.fewer": "Acheter une action {chain} de moins",
 	"buy.more": "Acheter une action {chain} de plus",
-	"buy.total": "{count} actions sur 3 · coût {cost} · argent restant {cash}",
+	"buy.total": "{count} actions sur {limit} · coût {cost} · argent restant {cash}",
 	"buy.nothing": "Ne rien acheter et finir le tour",
 	"buy.confirm": "Acheter pour {cost} et finir le tour",
 	"board.label": "Plateau",

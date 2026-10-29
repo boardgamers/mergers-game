@@ -104,6 +104,65 @@ try {
 	assert.equal(report.diagnostics.compatible, true);
 	assert.equal(report.diagnostics.recommended.percent, 100);
 
+	// Setup limits must reach both the localized UI and the engine-backed +/- controls.
+	for (const limit of [3, 4, 5]) {
+		await page.setViewportSize({ width: limit === 3 ? 1280 : limit === 4 ? 390 : 320, height: 900 });
+		await open(`players=3&hotseat=0&view=0&sharesPerTurn=${limit}&stockSwap=3`);
+		assert.equal(
+			await page.evaluate(() => window.acquireDev.rules.sharePurchaseLimit(window.acquireDev.state.options)),
+			limit
+		);
+		await page.evaluate((state) => {
+			const { parseTile, allTiles } = window.acquireDev.rules;
+			state.options = { ...window.acquireDev.state.options };
+			state.board[parseTile("1E")] = "continental";
+			state.board[parseTile("2E")] = "continental";
+			const held = new Set(state.seats.flatMap((seat) => seat.hand));
+			state.pool = allTiles().filter((tile) => state.board[tile] === null && !held.has(tile));
+			state.phase = "buy";
+			state.placedThisTurn = true;
+			window.acquireDev.load(state);
+		}, preparedPosition("scoring"));
+		await page.locator(".stock-swap summary").click();
+		assert.match(await page.locator(".stock-swap .note").innerText(), new RegExp(`up to ${limit} shares`));
+		const moreTower = page.getByRole("button", { name: "Buy one more Tower", exact: true });
+		for (let i = 0; i < limit; i++) {
+			await moreTower.click();
+		}
+		assert.equal(await moreTower.isDisabled(), true);
+		assert.equal(await page.getByRole("button", { name: "Buy one more Continental", exact: true }).isDisabled(), true);
+		assert.match(await page.locator(".panel .total").innerText(), new RegExp(`${limit} of ${limit} shares`));
+		await page.getByRole("button", { name: "Buy one fewer Tower", exact: true }).click();
+		await page.getByRole("button", { name: "Buy one more Continental", exact: true }).click();
+		for (const theme of ["light", "dark"]) {
+			await page.evaluate((value) => window.acquireDev.emitter.emit("theme", { dark: value === "dark" }), theme);
+			for (const locale of locales) {
+				await preferences({ locale });
+				assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+				assert.ok((await page.locator(".stock-swap .note").innerText()).includes(String(limit)));
+				assert.doesNotMatch(await page.locator(".panel").innerText(), /\{limit\}/);
+				assert.equal(await page.locator("table.buy button").filter({ hasText: "+" }).first().isDisabled(), true);
+			}
+			await preferences({ locale: "en" });
+			await page
+				.locator(".panel")
+				.screenshot({ path: fileURLToPath(new URL(`purchase-limit-${limit}-${theme}.png`, output)) });
+		}
+		await page.locator(".panel .primary").click();
+		await page.waitForFunction(() => window.acquireDev.state.turn === 2);
+		assert.deepEqual(
+			await page.evaluate(() => ({
+				bought: window.acquireDev.state.log.find((entry) => entry.type === "bought").shares,
+				cash: window.acquireDev.state.seats[0].cash,
+				increments: window.acquireDev.engine.timeIncrements(window.acquireDev.state),
+			})),
+			{ bought: { tower: limit - 1, continental: 1 }, cash: 6000 - (limit - 1) * 700 - 400, increments: [1, 0, 0] }
+		);
+	}
+	report.scenarios.push(
+		"3/4/5 share purchase limits, total across chains, independent swap allowance, 17 locales/both themes/mobile and one turn increment"
+	);
+
 	// The two-tile variant keeps both placements private until buying or a commit boundary.
 	for (const width of [1280, 390, 320]) {
 		await page.setViewportSize({ width, height: 900 });

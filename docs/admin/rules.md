@@ -21,7 +21,7 @@ A chain of 11 or more tiles is **safe**: it can never be taken over.
 ## Your turn
 
 1. **Place one tile** from your hand.
-2. **Buy up to 3 shares**, in any active chains (optional).
+2. **Buy up to 3 shares** by default, in any active chains (optional; see Shares per turn below).
 3. **Draw** back up to 6 tiles.
 
 ### What a tile does
@@ -41,7 +41,7 @@ A chain of 11 or more tiles is **safe**: it can never be taken over.
 
 If the game uses **Two tiles per turn**, each player holds 8 tiles instead of 6 and places two tiles every turn.
 
-At the start of your turn, swap out any dead tiles. Then place your first tile and settle anything it causes, including a full merger with everyone's sell, trade or keep decisions, before placing your second. After both tiles, buy up to 3 shares at the prices on the board, then draw back up to 8.
+At the start of your turn, swap out any dead tiles. Then place your first tile and settle anything it causes, including a full merger with everyone's sell, trade or keep decisions, before placing your second. After both tiles, buy shares up to the game’s per-turn limit (3 by default) at the prices on the board, then draw back up to 8.
 
 You may found only one chain per turn, and you can't found a chain and cause a merger in the same turn, in either order. You can cause two mergers, one with each tile. Example: your first tile merges Luxor into Tower, so your second tile can merge again or grow a chain, but it can't found a new one.
 
@@ -73,6 +73,13 @@ Then the survivor absorbs all the tiles. The names of the chains taken over are 
 
 After placing, you may buy up to 3 shares in total, in one or more chains on the board. Prices depend on each chain's current size and stay fixed for the rest of your turn. You can't borrow, and you can't sell stock except in a merger or at the end.
 
+### Optional purchase limit
+
+The **Shares per turn** setup option offers **3 (standard)**, **4** or **5**. This is the
+total you may buy across all chains, once per turn, even when playing two tiles. Founding
+gifts and shares received during mergers do not count. Cash and bank stock still limit
+what you can buy. Choosing 4 or 5 is a house rule; existing games and tutorials keep 3.
+
 ### Optional stock swaps
 
 If the game uses **Stock swap**, after your tile and any mergers are fully resolved you
@@ -86,7 +93,8 @@ each cost $800. Reversing that exchange pays you $800.
 
 The setting is **Off** (default), **3**, **5**, **7** or **Unlimited** shares per turn.
 The allowance is shared across exchanges: giving three shares and receiving three uses
-three of the allowance. You can still buy your usual **up to 3 shares** afterward.
+three of the allowance. You can still buy up to the game’s **Shares per turn** limit
+(**3** by default) afterward; the two allowances are independent.
 Swaps can be undone until you finish buying. This is an optional house rule.
 
 ## Price table
@@ -138,6 +146,7 @@ Because replaying the game would show the full history, replay is only available
 
 - **Limited game log:** the log shows only what happened since your last turn, until the game ends (see above).
 - **Two tiles per turn:** hands of 8 tiles and two tiles placed every turn (see above).
+- **Shares per turn:** buy up to 3 (standard), 4 or 5 shares in total per turn, independently of stock swaps.
 - **Stock swap:** optional 1:1 exchanges with the bank before buying; Off / 3 / 5 / 7 / Unlimited shares per turn (see above).
 - **Public holdings:** everyone's cash and shares are visible.
 - **Team play** (4 players only): seats 1 and 3 play against seats 2 and 4; each team's money is added together at the end.

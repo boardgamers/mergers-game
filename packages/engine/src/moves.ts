@@ -1,6 +1,7 @@
 import { activeChains, chainSize, connectedLoose, placementEffect, playableTiles, tileLegality } from "./board.js";
 import { defaultMove } from "./autoplay.js";
-import { AUTO_MOVE_LIMIT, CHAIN_IDS, MAX_BUY, isChainId, type ChainId } from "./config.js";
+import { AUTO_MOVE_LIMIT, CHAIN_IDS, isChainId, type ChainId } from "./config.js";
+import { sharePurchaseLimit } from "./options.js";
 import {
 	dispose,
 	isValidDefunctOrder,
@@ -160,8 +161,9 @@ export function sanitizeMove(state: GameState, raw: unknown, seat: number): Move
 				total += n;
 				cost += n * sharePrice(key, chainSize(state.board, key));
 			}
-			if (total > MAX_BUY) {
-				throw new Error(`You can buy at most ${MAX_BUY} shares per turn`);
+			const limit = sharePurchaseLimit(state.options);
+			if (total > limit) {
+				throw new Error(`You can buy at most ${limit} shares per turn`);
 			}
 			if (cost > state.seats[seat]!.cash) {
 				throw new Error("You cannot afford those shares");

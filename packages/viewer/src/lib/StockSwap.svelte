@@ -3,6 +3,7 @@
 		activeChains,
 		chainSize,
 		sharePrice,
+		sharePurchaseLimit,
 		stockSwapCost,
 		stockSwapsRemaining,
 		type ChainId,
@@ -48,7 +49,7 @@
 		{t("swap.title")}
 		<small>· {remaining === Infinity ? t("swap.unlimited") : t("swap.remaining", { count: remaining })}</small></summary
 	>
-	<p class="note">{t("swap.note")}</p>
+	<p class="note">{t("swap.note", { limit: sharePurchaseLimit(game.options) })}</p>
 	{#if choices.length}
 		<div class="chains">
 			<label

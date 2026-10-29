@@ -95,6 +95,26 @@
 			]
 		},
 		{
+			"name": "sharesPerTurn",
+			"label": "Shares per turn",
+			"type": "select",
+			"default": "3",
+			"items": [
+				{
+					"name": "3",
+					"label": "3 (standard)"
+				},
+				{
+					"name": "4",
+					"label": "4"
+				},
+				{
+					"name": "5",
+					"label": "5"
+				}
+			]
+		},
+		{
 			"name": "stockSwap",
 			"label": "Stock swap (shares per turn, optional variant)",
 			"type": "select",

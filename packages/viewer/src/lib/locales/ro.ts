@@ -2,7 +2,8 @@ import type { Catalog } from "../i18n.ts";
 
 export const ro: Catalog = {
 	"swap.title": "Schimb de acțiuni",
-	"swap.note": "Schimbă 1:1 la prețurile curente înainte de cumpărare. Poți cumpăra în continuare până la 3 acțiuni.",
+	"swap.note":
+		"Schimbă 1:1 la prețurile curente înainte de cumpărare. Poți cumpăra în continuare până la {limit} acțiuni.",
 	"swap.remaining": "{count} rămase în această tură",
 	"swap.unlimited": "Nelimitat",
 	"swap.give": "Dai (acțiunile tale)",
@@ -72,14 +73,14 @@ export const ro: Catalog = {
 	"dispose.tradeFewer": "Schimbă două mai puțin",
 	"dispose.tradeMore": "Schimbă două în plus",
 	"dispose.confirm": "Confirmă",
-	"buy.prompt": "Cumpără până la 3 acțiuni. Prețurile rămân fixe în această tură.",
+	"buy.prompt": "Cumpără până la {limit} acțiuni. Prețurile rămân fixe în această tură.",
 	"buy.chain": "Lanț",
 	"buy.price": "Preț",
 	"buy.bank": "Bancă",
 	"buy.buy": "Cumpără",
 	"buy.fewer": "Cumpără o acțiune {chain} mai puțin",
 	"buy.more": "Cumpără o acțiune {chain} în plus",
-	"buy.total": "{count} din 3 acțiuni · cost {cost} · bani rămași {cash}",
+	"buy.total": "{count} din {limit} acțiuni · cost {cost} · bani rămași {cash}",
 	"buy.nothing": "Nu cumpăra nimic și încheie tura",
 	"buy.confirm": "Cumpără cu {cost} și încheie tura",
 	"board.label": "Tablă",

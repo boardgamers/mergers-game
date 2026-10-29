@@ -3,7 +3,7 @@
 // per CLDR plural category of the language. Chain names are never translated.
 export const en = {
 	"swap.title": "Stock swap",
-	"swap.note": "Swap 1:1 at current prices before buying. You may still buy up to 3 shares.",
+	"swap.note": "Swap 1:1 at current prices before buying. You may still buy up to {limit} shares.",
 	"swap.remaining": "{count} left this turn",
 	"swap.unlimited": "Unlimited",
 	"swap.give": "Give (your stock)",
@@ -73,14 +73,14 @@ export const en = {
 	"dispose.tradeFewer": "Trade two fewer",
 	"dispose.tradeMore": "Trade two more",
 	"dispose.confirm": "Confirm",
-	"buy.prompt": "Buy up to 3 shares. Prices are fixed for this turn.",
+	"buy.prompt": "Buy up to {limit} shares. Prices are fixed for this turn.",
 	"buy.chain": "Chain",
 	"buy.price": "Price",
 	"buy.bank": "Bank",
 	"buy.buy": "Buy",
 	"buy.fewer": "Buy one fewer {chain}",
 	"buy.more": "Buy one more {chain}",
-	"buy.total": "{count} of 3 shares · cost {cost} · cash left {cash}",
+	"buy.total": "{count} of {limit} shares · cost {cost} · cash left {cash}",
 	"buy.nothing": "Buy nothing and end turn",
 	"buy.confirm": "Buy for {cost} and end turn",
 

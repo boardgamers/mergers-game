@@ -1,4 +1,4 @@
-import { END_SIZE, HAND_SIZE, TWO_TILE_HAND_SIZE } from "./config.js";
+import { END_SIZE, HAND_SIZE, MAX_BUY, TWO_TILE_HAND_SIZE } from "./config.js";
 
 /** rules.md §15, after normalisation against the player count. */
 export interface GameOptions {
@@ -9,6 +9,8 @@ export interface GameOptions {
 	endSize: number;
 	/** Omitted when off, preserving the init log of games created before this variant. */
 	stockSwap?: 3 | 5 | 7 | "unlimited";
+	/** Omitted at the standard limit of 3, preserving historical init logs. */
+	sharesPerTurn?: 4 | 5;
 	/** Omitted when off, like stockSwap. */
 	twoTiles?: true;
 	/** Omitted when off, like stockSwap. */
@@ -84,6 +86,14 @@ export function normalizeOptions(
 		}
 	}
 
+	if (raw.sharesPerTurn !== undefined) {
+		if ([4, 5, "4", "5"].includes(raw.sharesPerTurn as number | string)) {
+			options.sharesPerTurn = Number(raw.sharesPerTurn) as 4 | 5;
+		} else if (raw.sharesPerTurn !== 3 && raw.sharesPerTurn !== "3") {
+			ignored.push({ option: "sharesPerTurn", value: raw.sharesPerTurn, reason: "unknown value" });
+		}
+	}
+
 	if (raw.twoTiles === true) {
 		options.twoTiles = true;
 	}
@@ -92,6 +102,11 @@ export function normalizeOptions(
 	}
 
 	return { options, ignored };
+}
+
+/** Total purchases across all chains, independent of stock swaps and tile placements. */
+export function sharePurchaseLimit(options: GameOptions): number {
+	return options.sharesPerTurn ?? MAX_BUY;
 }
 
 /** rules.md §15 twoTiles: hands hold 8 tiles instead of 6. */

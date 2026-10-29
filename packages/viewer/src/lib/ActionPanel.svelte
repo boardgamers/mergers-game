@@ -6,6 +6,7 @@
 		currentSeat,
 		merger,
 		sharePrice,
+		sharePurchaseLimit,
 		tileLabel,
 		type ChainId,
 		type Shares,
@@ -67,6 +68,7 @@
 	const valueChange = $derived(`${tradeValue < 0 ? "−" : "+"}${money(Math.abs(tradeValue))}`);
 
 	const buyable = $derived(activeChains(game.board));
+	const buyLimit = $derived(sharePurchaseLimit(game.options));
 	const price = (chain: ChainId) => sharePrice(chain, chainSize(game.board, chain));
 	const cost = $derived(Object.entries(shares).reduce((sum, [chain, n]) => sum + n * price(chain as ChainId), 0));
 	const total = $derived(Object.values(shares).reduce((sum, n) => sum + n, 0));
@@ -296,7 +298,7 @@
 			>
 		{:else if game.phase === "buy"}
 			{#if game.options.stockSwap}<StockSwap {store} bind:open={swapOpen} />{/if}
-			<p>{t("buy.prompt")}</p>
+			<p>{t("buy.prompt", { limit: buyLimit })}</p>
 			{#if buyable.length > 0}
 				<table class="buy">
 					<thead>
@@ -337,7 +339,12 @@
 				</table>
 			{/if}
 			<p class="total">
-				{t("buy.total", { count: total, cost: money(cost), cash: money(game.seats[seat!]!.cash - cost) })}
+				{t("buy.total", {
+					count: total,
+					limit: buyLimit,
+					cost: money(cost),
+					cash: money(game.seats[seat!]!.cash - cost),
+				})}
 			</p>
 			<button type="button" class="actionable primary" onclick={() => store.send({ type: "buy", shares })}>
 				{total === 0 ? t("buy.nothing") : t("buy.confirm", { cost: money(cost) })}

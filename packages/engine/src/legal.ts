@@ -1,12 +1,13 @@
 import { activeChains } from "./board.js";
-import { CHAIN_IDS, MAX_BUY, type ChainId } from "./config.js";
+import { CHAIN_IDS, type ChainId } from "./config.js";
 import { merger } from "./merger.js";
 import { currentSeat, sanitizeMove } from "./moves.js";
+import { sharePurchaseLimit } from "./options.js";
 import { maxStockSwap } from "./stock-swap.js";
 import { tileLabel } from "./tiles.js";
 import type { GameState, Move, Shares } from "./types.js";
 
-function buyCombinations(chains: ChainId[]): Partial<Shares>[] {
+function buyCombinations(chains: ChainId[], limit: number): Partial<Shares>[] {
 	const result: Partial<Shares>[] = [];
 	const visit = (from: number, remaining: number, current: Partial<Shares>) => {
 		result.push({ ...current });
@@ -23,7 +24,7 @@ function buyCombinations(chains: ChainId[]): Partial<Shares>[] {
 			}
 		}
 	};
-	visit(0, MAX_BUY, {});
+	visit(0, limit, {});
 	return result;
 }
 
@@ -72,7 +73,10 @@ function phaseCandidates(state: GameState): Move[] {
 		}
 		case "buy": {
 			const active = activeChains(state.board);
-			const moves: Move[] = buyCombinations(active).map((shares) => ({ type: "buy", shares }));
+			const moves: Move[] = buyCombinations(active, sharePurchaseLimit(state.options)).map((shares) => ({
+				type: "buy",
+				shares,
+			}));
 			for (const from of active) {
 				for (const to of active) {
 					const max = maxStockSwap(state, from, to);
