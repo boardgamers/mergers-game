@@ -24,7 +24,6 @@
 		},
 		"topLevelVariable": "acquire",
 		"chat": true,
-		"integratedControls": ["chat"],
 		"replayable": true,
 		"fullScreenMobile": false
 	},
